@@ -1,0 +1,19 @@
+# Environment-specific values with secrets
+**/values-prod.yaml
+**/values-*.local.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+forbidden/
+testing/

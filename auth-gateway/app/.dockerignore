@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+
+# Env / secrets
+.env
+.env.*
+
+# VCS
+.git/
+.gitignore
+
+# OS junk
+.DS_Store
+
+# Docs / misc
+README.md

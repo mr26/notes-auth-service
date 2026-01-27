@@ -1,0 +1,24 @@
+replicaCount: 1
+
+image:
+  # Override in values-prod.yaml
+  repository: ""
+  tag: "1.0.12"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 8000
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+
+env:
+  AWS_REGION: "us-east-1"
+  # Override in values-prod.yaml
+  COGNITO_CLIENT_ID: ""
+  COGNITO_SECRET_NAME: "auth-gateway/cognito"
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
