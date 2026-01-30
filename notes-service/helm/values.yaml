@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  # Override in private config
+  repository: ""
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8000
+
+env:
+  AWS_REGION: "us-east-1"
+  # Override in private config
+  COGNITO_USER_POOL_ID: ""
+  AUTH_GATEWAY_URL: "http://auth-gateway-auth-gateway.auth.svc.cluster.local:8000/activity"
+
+# Database config - override in private config
+database:
+  host: ""
+  port: "3306"
+  name: "notes"
+
+# External Secrets - pulls credentials from AWS Secrets Manager
+externalSecret:
+  enabled: true
+  secretStoreRef: "aws-secretstore"
+  secretName: "notes-app-db-secret"
+
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}

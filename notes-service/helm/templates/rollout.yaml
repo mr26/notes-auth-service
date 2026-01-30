@@ -1,0 +1,81 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "notes-service.fullname" . }}
+  labels:
+    app: {{ include "notes-service.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: {{ include "notes-service.name" . }}
+  strategy:
+    blueGreen:
+      activeService: {{ include "notes-service.fullname" . }}
+      previewService: {{ include "notes-service.fullname" . }}-preview
+      autoPromotionEnabled: true
+      autoPromotionSeconds: 60
+      scaleDownDelaySeconds: 30
+  template:
+    metadata:
+      labels:
+        app: {{ include "notes-service.name" . }}
+    spec:
+      containers:
+        - name: notes-service
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AWS_REGION
+              value: "{{ .Values.env.AWS_REGION }}"
+            - name: COGNITO_USER_POOL_ID
+              value: "{{ .Values.env.COGNITO_USER_POOL_ID }}"
+            - name: AUTH_GATEWAY_URL
+              value: "{{ .Values.env.AUTH_GATEWAY_URL }}"
+            - name: DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: DB_NAME
+              value: "{{ .Values.database.name }}"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "notes-service.fullname" . }}-db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "notes-service.fullname" . }}-db-credentials
+                  key: password
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
