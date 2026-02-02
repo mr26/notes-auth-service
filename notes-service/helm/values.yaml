@@ -7,8 +7,10 @@ image:
   pullPolicy: IfNotPresent
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 8000
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-internal: "true"
 
 env:
   AWS_REGION: "us-east-1"
