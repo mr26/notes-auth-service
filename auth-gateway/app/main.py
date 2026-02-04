@@ -12,12 +12,41 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import logging
 
+# OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.botocore import BotocoreInstrumentor
+
+# ----------------------------
+# OpenTelemetry Setup
+# ----------------------------
+
+OTEL_ENDPOINT = os.environ.get(
+    "OTEL_EXPORTER_OTLP_ENDPOINT",
+    "http://otel-collector-opentelemetry-collector.observability.svc.cluster.local:4317"
+)
+
+resource = Resource(attributes={SERVICE_NAME: "auth-gateway"})
+provider = TracerProvider(resource=resource)
+provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_ENDPOINT, insecure=True)))
+trace.set_tracer_provider(provider)
+
+# Auto-instrument botocore (Cognito, Secrets Manager calls)
+BotocoreInstrumentor().instrument()
+
 
 # ----------------------------
 # App & AWS setup
 # ----------------------------
 
-app = FastAPI(title="Auth Gateway", version="1.1")
+app = FastAPI(title="Auth Gateway", version="1.2")
+
+# Auto-instrument FastAPI (all routes automatically traced)
+FastAPIInstrumentor.instrument_app(app)
 
 AWS_REGION = os.environ["AWS_REGION"]
 CLIENT_ID = os.environ["COGNITO_CLIENT_ID"]
