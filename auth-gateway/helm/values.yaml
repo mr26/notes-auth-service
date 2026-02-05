@@ -18,6 +18,10 @@ env:
   COGNITO_CLIENT_ID: ""
   COGNITO_SECRET_NAME: "auth-gateway/cognito"
 
+serviceAccount:
+  # Override in private config
+  roleArn: ""
+
 resources: {}
 nodeSelector: {}
 tolerations: []

@@ -22,6 +22,7 @@ spec:
       labels:
         app: {{ include "auth-gateway.name" . }}
     spec:
+      serviceAccountName: {{ include "auth-gateway.fullname" . }}-sa
       containers:
         - name: auth-gateway
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
