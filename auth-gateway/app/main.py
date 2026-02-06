@@ -20,6 +20,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource, SERVICE_NAME
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.botocore import BotocoreInstrumentor
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # ----------------------------
 # OpenTelemetry Setup
@@ -47,6 +48,9 @@ app = FastAPI(title="Auth Gateway", version="1.2")
 
 # Auto-instrument FastAPI (all routes automatically traced)
 FastAPIInstrumentor.instrument_app(app)
+
+# Prometheus metrics - exposes /metrics endpoint
+Instrumentator().instrument(app).expose(app)
 
 AWS_REGION = os.environ["AWS_REGION"]
 CLIENT_ID = os.environ["COGNITO_CLIENT_ID"]
