@@ -26,3 +26,6 @@ resources: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+serviceMonitor:
+  enabled: true
