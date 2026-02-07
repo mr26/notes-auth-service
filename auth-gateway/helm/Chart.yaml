@@ -2,5 +2,5 @@ apiVersion: v2
 name: auth-gateway
 description: A Helm chart for the Auth Gateway service
 type: application
-version: 1.0.13
+version: 1.0.14
 appVersion: "1.0.0"
