@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ include "auth-gateway.name" . }}
+    release: prometheus-stack
 spec:
   selector:
     matchLabels:
