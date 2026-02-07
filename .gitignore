@@ -17,3 +17,5 @@ venv/
 .DS_Store
 forbidden/
 testing/
+.cursor/
+.github/
