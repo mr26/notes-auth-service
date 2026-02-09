@@ -1,0 +1,12 @@
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: {{ include "auth-gateway.fullname" . }}-allow-scraping
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "auth-gateway.name" . }}
+  portLevelMtls:
+    8000:
+      mode: PERMISSIVE
