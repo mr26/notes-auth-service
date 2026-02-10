@@ -216,7 +216,7 @@ data:
           "targets": [
             {
               "expr": "sum by (handler, method) (rate(http_requests_total{job=\"auth-gateway-auth-gateway\"}[5m]))",
-              "legendFormat": "{{method}} {{handler}}",
+              "legendFormat": "{{ "{{" }}method{{ "}}" }} {{ "{{" }}handler{{ "}}" }}",
               "refId": "A"
             }
           ]
@@ -248,7 +248,7 @@ data:
           "targets": [
             {
               "expr": "sum by (handler, status) (rate(http_requests_total{job=\"auth-gateway-auth-gateway\", status=~\"4xx|5xx\"}[5m]))",
-              "legendFormat": "{{handler}} {{status}}",
+              "legendFormat": "{{ "{{" }}handler{{ "}}" }} {{ "{{" }}status{{ "}}" }}",
               "refId": "A"
             }
           ]
@@ -333,7 +333,7 @@ data:
           "targets": [
             {
               "expr": "sum by (handler) (rate(http_request_duration_seconds_sum{job=\"auth-gateway-auth-gateway\"}[5m])) / sum by (handler) (rate(http_request_duration_seconds_count{job=\"auth-gateway-auth-gateway\"}[5m]))",
-              "legendFormat": "{{handler}}",
+              "legendFormat": "{{ "{{" }}handler{{ "}}" }}",
               "refId": "A"
             }
           ]
