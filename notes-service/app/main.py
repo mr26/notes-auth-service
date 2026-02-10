@@ -9,6 +9,18 @@ import mysql.connector
 from mysql.connector import pooling
 import logging
 
+# OpenTelemetry
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource, SERVICE_NAME
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+
+# Prometheus metrics
+from prometheus_fastapi_instrumentator import Instrumentator
+
 
 # ---------- CONFIG ----------
 USER_POOL_ID = os.environ["COGNITO_USER_POOL_ID"]
@@ -23,12 +35,36 @@ DB_NAME = os.environ["DB_NAME"]
 DB_USER = os.environ["DB_USER"]
 DB_PASSWORD = os.environ["DB_PASSWORD"]
 
-app = FastAPI(title="Notes Service", version="1.0")
+# ----------------------------
+# OpenTelemetry Setup
+# ----------------------------
+OTEL_ENDPOINT = os.environ.get(
+    "OTEL_EXPORTER_OTLP_ENDPOINT",
+    "http://otel-collector-opentelemetry-collector.observability.svc.cluster.local:4317"
+)
+
+resource = Resource(attributes={SERVICE_NAME: "notes-service"})
+provider = TracerProvider(resource=resource)
+provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=OTEL_ENDPOINT, insecure=True)))
+trace.set_tracer_provider(provider)
+
+RequestsInstrumentor().instrument()  # Auto-instrument outbound HTTP calls (to auth-gateway)
+
+app = FastAPI(title="Notes Service", version="1.1")
+
+FastAPIInstrumentor.instrument_app(app)  # Auto-instrument all FastAPI routes
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
+
+
+# Prometheus metrics endpoint
+@app.on_event("startup")
+async def startup_metrics():
+    Instrumentator().instrument(app).expose(app)
 
 # Connection pool
 db_pool = None
