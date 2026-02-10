@@ -53,18 +53,13 @@ RequestsInstrumentor().instrument()  # Auto-instrument outbound HTTP calls (to a
 app = FastAPI(title="Notes Service", version="1.1")
 
 FastAPIInstrumentor.instrument_app(app)  # Auto-instrument all FastAPI routes
+Instrumentator().instrument(app).expose(app)  # Prometheus /metrics endpoint
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
-
-
-# Prometheus metrics endpoint
-@app.on_event("startup")
-async def startup_metrics():
-    Instrumentator().instrument(app).expose(app)
 
 # Connection pool
 db_pool = None
