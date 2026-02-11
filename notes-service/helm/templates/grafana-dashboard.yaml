@@ -46,7 +46,7 @@ data:
           },
           "targets": [
             {
-              "expr": "up{job=~\".*notes-service.*\"}",
+              "expr": "up{job=\"prod-release1\"}",
               "legendFormat": "notes-service",
               "refId": "A"
             }
@@ -81,7 +81,7 @@ data:
           },
           "targets": [
             {
-              "expr": "time() - process_start_time_seconds{job=~\".*notes-service.*\"}",
+              "expr": "time() - process_start_time_seconds{job=\"prod-release1\"}",
               "legendFormat": "uptime",
               "refId": "A"
             }
@@ -111,7 +111,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(http_requests_total{job=~\".*notes-service.*\"})",
+              "expr": "sum(http_requests_total{job=\"prod-release1\"})",
               "legendFormat": "total",
               "refId": "A"
             }
@@ -149,7 +149,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(rate(http_requests_total{job=~\".*notes-service.*\", status=~\"5xx|4xx\"}[5m])) / sum(rate(http_requests_total{job=~\".*notes-service.*\"}[5m])) or vector(0)",
+              "expr": "sum(rate(http_requests_total{job=\"prod-release1\", status=~\"5xx|4xx\"}[5m])) / sum(rate(http_requests_total{job=\"prod-release1\"}[5m])) or vector(0)",
               "legendFormat": "error rate",
               "refId": "A"
             }
@@ -185,7 +185,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum(rate(http_request_duration_seconds_sum{job=~\".*notes-service.*\"}[5m])) / sum(rate(http_request_duration_seconds_count{job=~\".*notes-service.*\"}[5m]))",
+              "expr": "sum(rate(http_request_duration_seconds_sum{job=\"prod-release1\"}[5m])) / sum(rate(http_request_duration_seconds_count{job=\"prod-release1\"}[5m]))",
               "legendFormat": "avg latency",
               "refId": "A"
             }
@@ -216,7 +216,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum by (handler, method) (rate(http_requests_total{job=~\".*notes-service.*\"}[5m]))",
+              "expr": "sum by (handler, method) (rate(http_requests_total{job=\"prod-release1\"}[5m]))",
               "legendFormat": "{{ "{{" }}method{{ "}}" }} {{ "{{" }}handler{{ "}}" }}",
               "refId": "A"
             }
@@ -248,7 +248,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum by (handler, status) (rate(http_requests_total{job=~\".*notes-service.*\", status=~\"4xx|5xx\"}[5m]))",
+              "expr": "sum by (handler, status) (rate(http_requests_total{job=\"prod-release1\", status=~\"4xx|5xx\"}[5m]))",
               "legendFormat": "{{ "{{" }}handler{{ "}}" }} {{ "{{" }}status{{ "}}" }}",
               "refId": "A"
             }
@@ -292,17 +292,17 @@ data:
           },
           "targets": [
             {
-              "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job=~\".*notes-service.*\"}[5m])))",
+              "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job=\"prod-release1\"}[5m])))",
               "legendFormat": "p50",
               "refId": "A"
             },
             {
-              "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job=~\".*notes-service.*\"}[5m])))",
+              "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job=\"prod-release1\"}[5m])))",
               "legendFormat": "p95",
               "refId": "B"
             },
             {
-              "expr": "histogram_quantile(0.99, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job=~\".*notes-service.*\"}[5m])))",
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(http_request_duration_highr_seconds_bucket{job=\"prod-release1\"}[5m])))",
               "legendFormat": "p99",
               "refId": "C"
             }
@@ -333,7 +333,7 @@ data:
           },
           "targets": [
             {
-              "expr": "sum by (handler) (rate(http_request_duration_seconds_sum{job=~\".*notes-service.*\"}[5m])) / sum by (handler) (rate(http_request_duration_seconds_count{job=~\".*notes-service.*\"}[5m]))",
+              "expr": "sum by (handler) (rate(http_request_duration_seconds_sum{job=\"prod-release1\"}[5m])) / sum by (handler) (rate(http_request_duration_seconds_count{job=\"prod-release1\"}[5m]))",
               "legendFormat": "{{ "{{" }}handler{{ "}}" }}",
               "refId": "A"
             }
@@ -372,7 +372,7 @@ data:
           },
           "targets": [
             {
-              "expr": "rate(process_cpu_seconds_total{job=~\".*notes-service.*\"}[5m])",
+              "expr": "rate(process_cpu_seconds_total{job=\"prod-release1\"}[5m])",
               "legendFormat": "CPU usage",
               "refId": "A"
             }
@@ -411,7 +411,7 @@ data:
           },
           "targets": [
             {
-              "expr": "process_resident_memory_bytes{job=~\".*notes-service.*\"}",
+              "expr": "process_resident_memory_bytes{job=\"prod-release1\"}",
               "legendFormat": "RSS memory",
               "refId": "A"
             }
@@ -439,12 +439,12 @@ data:
           },
           "targets": [
             {
-              "expr": "process_open_fds{job=~\".*notes-service.*\"}",
+              "expr": "process_open_fds{job=\"prod-release1\"}",
               "legendFormat": "open FDs",
               "refId": "A"
             },
             {
-              "expr": "process_max_fds{job=~\".*notes-service.*\"}",
+              "expr": "process_max_fds{job=\"prod-release1\"}",
               "legendFormat": "max FDs",
               "refId": "B"
             }
