@@ -1,0 +1,51 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: localfiles.mehdi.dev
+spec:
+  group: mehdi.dev
+  scope: Namespaced
+  names:
+    kind: LocalFile
+    listKind: LocalFileList
+    plural: localfiles
+    singular: localfile
+    shortNames: [lf]
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      subresources:
+        # Required for the operator to write .status via patch.status
+        status: {}
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              required: [filename]
+              properties:
+                filename:
+                  type: string
+                  description: File to create. Must end with -mehdik8s (enforced by Kyverno).
+                  # EXERCISE: uncomment to enforce the suffix structurally, in the API
+                  # server's own schema validation — no admission webhook involved.
+                  # Compare the error message to Kyverno's, then re-comment it.
+                  # pattern: '.*-mehdik8s$'
+                content:
+                  type: string
+                  default: ""
+            status:
+              type: object
+              x-kubernetes-preserve-unknown-fields: true
+      additionalPrinterColumns:
+        - name: Filename
+          type: string
+          jsonPath: .spec.filename
+        - name: Path
+          type: string
+          jsonPath: .status.path
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp

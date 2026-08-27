@@ -1,0 +1,19 @@
+# Kyverno ships RBAC for built-in resources only. To scan a CUSTOM resource in the
+# background (which is what produces PolicyReports), its controllers need read access.
+#
+# Why admission worked without this: the webhook receives the object inside the
+# AdmissionReview request, so Kyverno never has to read it from the API. Background
+# scanning does have to list/watch it — hence this ClusterRole.
+#
+# Kyverno picks these up via label-based ClusterRole aggregation.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:localfiles-view
+  labels:
+    rbac.kyverno.io/aggregate-to-reports-controller: "true"
+    rbac.kyverno.io/aggregate-to-background-controller: "true"
+rules:
+  - apiGroups: ["mehdi.dev"]
+    resources: ["localfiles"]
+    verbs: ["get", "list", "watch"]

@@ -1,0 +1,24 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: localfile-add-timestamp
+  annotations:
+    policies.kyverno.io/description: >-
+      MUTATING admission policy. Stamps every LocalFile with the UTC time it was
+      admitted, before the object is persisted to etcd. The operator reads this
+      annotation back, which proves the object was modified in flight.
+spec:
+  # This policy only needs to run at admission, not against existing resources
+  background: false
+  rules:
+    - name: add-created-timestamp
+      match:
+        any:
+          - resources:
+              kinds:
+                - mehdi.dev/v1alpha1/LocalFile
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            annotations:
+              mehdi.dev/created-at: "{{ time_now_utc() }}"
