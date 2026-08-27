@@ -1,0 +1,29 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: localfile-validate-suffix
+  annotations:
+    policies.kyverno.io/description: >-
+      VALIDATING admission policy. Rejects any LocalFile whose spec.filename does
+      not end in -mehdik8s. A rejected object never reaches etcd, so the operator
+      never sees it.
+spec:
+  # Enforce = reject the request. Switch to Audit to only record a violation
+  # (a policy report) while still letting the object through — this is how you
+  # roll a new policy out safely against existing workloads.
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: filename-must-end-with-mehdik8s
+      match:
+        any:
+          - resources:
+              kinds:
+                - mehdi.dev/v1alpha1/LocalFile
+      validate:
+        message: >-
+          spec.filename must end with '-mehdik8s'
+          (got '{{ request.object.spec.filename }}')
+        pattern:
+          spec:
+            filename: "*-mehdik8s"

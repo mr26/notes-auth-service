@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: localfile-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: localfile-operator
+  namespace: localfile-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: localfile-operator
+rules:
+  # The custom resource this operator reconciles, plus its status subresource
+  - apiGroups: ["mehdi.dev"]
+    resources: ["localfiles", "localfiles/status"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  # kopf reads CRDs at startup to learn the resource shape
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list", "watch"]
+  # kopf posts Events against the resources it handles
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
+  # Needed to watch across all namespaces
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: localfile-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: localfile-operator
+subjects:
+  - kind: ServiceAccount
+    name: localfile-operator
+    namespace: localfile-system

@@ -1,0 +1,10 @@
+apiVersion: mehdi.dev/v1alpha1
+kind: LocalFile
+metadata:
+  name: hello
+spec:
+  filename: ayo-hello-mehdik8s
+  content: |
+    Written by the LocalFile operator.
+    Change this content and re-apply — the operator rewrites the file.
+    ayo

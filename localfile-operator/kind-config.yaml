@@ -1,0 +1,14 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: localfile-lab
+nodes:
+  - role: control-plane
+    extraMounts:
+      # Mount chain that gets files onto your Mac:
+      #   Mac /tmp/localfiles  ->  node /mnt/localfiles  ->  operator pod /data
+      # The last hop is the hostPath volume in manifests/operator.yaml.
+      #
+      # macOS /tmp is a symlink to /private/tmp, so the real path is used here
+      # (Docker can't share a symlink). Files still show up at /tmp/localfiles.
+      - hostPath: /private/tmp/localfiles
+        containerPath: /mnt/localfiles

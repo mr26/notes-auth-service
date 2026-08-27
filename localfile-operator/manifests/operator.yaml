@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: localfile-operator
+  namespace: localfile-system
+  labels:
+    app: localfile-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: localfile-operator
+  template:
+    metadata:
+      labels:
+        app: localfile-operator
+    spec:
+      serviceAccountName: localfile-operator
+      containers:
+        - name: operator
+          image: localfile-operator:dev
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: LOCALFILE_DIR
+              value: /data
+          volumeMounts:
+            - name: hostfiles
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+      volumes:
+        - name: hostfiles
+          hostPath:
+            # kind maps this to your Mac's /tmp/localfiles (see kind-config.yaml)
+            path: /mnt/localfiles
+            type: DirectoryOrCreate
